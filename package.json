@@ -2,7 +2,7 @@
   "name": "codefit",
   "displayName": "CodeFit - Developer Health & Wellness",
   "description": "Smart health reminders and exercise tracking for developers. Stay healthy while coding!",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "codefit",
   "engines": {
     "vscode": "^1.85.0"
@@ -71,6 +71,26 @@
         "command": "codefit.pauseReminders",
         "title": "CodeFit: Pause/Resume Reminders",
         "icon": "$(debug-pause)"
+      },
+      {
+        "command": "codefit.signIn",
+        "title": "CodeFit: Sign In",
+        "icon": "$(sign-in)"
+      },
+      {
+        "command": "codefit.signOut",
+        "title": "CodeFit: Sign Out",
+        "icon": "$(sign-out)"
+      },
+      {
+        "command": "codefit.syncData",
+        "title": "CodeFit: Sync Data to Cloud",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "codefit.viewLicense",
+        "title": "CodeFit: View License Info",
+        "icon": "$(key)"
       }
     ],
     "configuration": {

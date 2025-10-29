@@ -335,6 +335,13 @@ export class HealthTracker {
   }
 
   /**
+   * Get all activities (public accessor for cloud sync)
+   */
+  public getAllActivities(): Activity[] {
+    return this.getActivities();
+  }
+
+  /**
    * Save activity
    */
   private async saveActivity(activity: Activity): Promise<void> {

@@ -2,6 +2,40 @@
 
 All notable changes to the "CodeFit" extension will be documented in this file.
 
+## [0.2.0] - 2025-10-29
+
+### Added
+- ☁️ **Cloud Sync & Enterprise Features**
+  - Sign in with Google account
+  - Automatic cloud backup of health data
+  - Cross-device data synchronization
+  - License management system (Personal/Team/Enterprise tiers)
+- 🔐 **New Commands**
+  - `CodeFit: Sign In` - Authenticate with Google
+  - `CodeFit: Sign Out` - Sign out of account
+  - `CodeFit: Sync Data to Cloud` - Manually sync local data
+  - `CodeFit: View License Info` - View your license details
+- 🔄 **Hybrid Mode**
+  - Works fully offline (local-first)
+  - Automatic sync when online and signed in
+  - Seamless transition between offline/online modes
+- 🏢 **Enterprise Support**
+  - Organization management
+  - Team challenges
+  - Analytics dashboard access
+  - ROI metrics (Team/Enterprise plans)
+
+### Changed
+- Updated Firebase integration with production backend
+- Improved status bar to show sign-in status
+- Enhanced welcome flow with cloud sync option
+
+### Technical
+- Integrated FirebaseService for cloud operations
+- Added public `getAllActivities()` method to HealthTracker
+- Session restoration on extension activation
+- Improved error handling for network operations
+
 ## [0.1.0] - 2025-10-28
 
 ### Added

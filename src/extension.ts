@@ -6,8 +6,10 @@ import { GamificationService } from './services/GamificationService';
 import { GitIntegration } from './services/GitIntegration';
 import { HealthStatusBar } from './ui/StatusBar';
 import { StorageManager } from './utils/storage';
+import { FirebaseService } from './services/FirebaseService';
 
 let outputChannel: vscode.OutputChannel;
+let firebaseService: FirebaseService;
 
 export function activate(context: vscode.ExtensionContext) {
   try {
@@ -66,6 +68,29 @@ export function activate(context: vscode.ExtensionContext) {
     outputChannel.appendLine('Initializing StatusBar...');
     const statusBar = new HealthStatusBar(context, healthTracker);
     outputChannel.appendLine('✓ StatusBar initialized');
+
+    // 6. Initialize FirebaseService (for cloud sync and enterprise features)
+    outputChannel.appendLine('Initializing FirebaseService...');
+    firebaseService = FirebaseService.getInstance(context);
+    outputChannel.appendLine('✓ FirebaseService initialized');
+
+    // Try to restore previous session silently
+    const hasStoredToken = context.globalState.get<string>('firebaseToken');
+    if (hasStoredToken) {
+      outputChannel.appendLine('Previous session found, attempting silent restore...');
+      firebaseService.authenticate().then((success) => {
+        if (success) {
+          outputChannel.appendLine('✓ Session restored successfully');
+          const email = firebaseService.getUserEmail();
+          const licenseType = firebaseService.getLicenseType();
+          outputChannel.appendLine(`Signed in as: ${email} (License: ${licenseType})`);
+        } else {
+          outputChannel.appendLine('Session restore failed');
+        }
+      }).catch((error) => {
+        outputChannel.appendLine(`Session restore error: ${error}`);
+      });
+    }
 
     // Start services
     try {
@@ -228,6 +253,163 @@ export function activate(context: vscode.ExtensionContext) {
           const errorMsg = error instanceof Error ? error.message : String(error);
           outputChannel.appendLine(`Error in exportData: ${errorMsg}`);
           vscode.window.showErrorMessage(`Failed to export data: ${errorMsg}`);
+        }
+      })
+    );
+
+    // Firebase commands (Cloud sync and enterprise features)
+    context.subscriptions.push(
+      vscode.commands.registerCommand('codefit.signIn', async () => {
+        outputChannel.appendLine('Command: signIn triggered');
+        try {
+          const success = await firebaseService.authenticate();
+          if (success) {
+            const email = firebaseService.getUserEmail();
+            const licenseType = firebaseService.getLicenseType();
+
+            vscode.window.showInformationMessage(
+              `✓ Signed in as ${email} (${licenseType} license)`,
+              'Sync Data Now',
+              'View License'
+            ).then(async (choice) => {
+              if (choice === 'Sync Data Now') {
+                await vscode.commands.executeCommand('codefit.syncData');
+              } else if (choice === 'View License') {
+                await vscode.commands.executeCommand('codefit.viewLicense');
+              }
+            });
+
+            // Update status bar
+            statusBar.update();
+          } else {
+            vscode.window.showErrorMessage('Sign in failed. Please try again.');
+          }
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          outputChannel.appendLine(`Error in signIn: ${errorMsg}`);
+          vscode.window.showErrorMessage(`Sign in failed: ${errorMsg}`);
+        }
+      })
+    );
+
+    context.subscriptions.push(
+      vscode.commands.registerCommand('codefit.signOut', async () => {
+        outputChannel.appendLine('Command: signOut triggered');
+        try {
+          await firebaseService.signOut();
+          vscode.window.showInformationMessage('✓ Signed out successfully');
+          statusBar.update();
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          outputChannel.appendLine(`Error in signOut: ${errorMsg}`);
+          vscode.window.showErrorMessage(`Sign out failed: ${errorMsg}`);
+        }
+      })
+    );
+
+    context.subscriptions.push(
+      vscode.commands.registerCommand('codefit.syncData', async () => {
+        outputChannel.appendLine('Command: syncData triggered');
+
+        if (!firebaseService.isAuthenticated()) {
+          const signIn = await vscode.window.showInformationMessage(
+            'Please sign in to sync data',
+            'Sign In'
+          );
+          if (signIn === 'Sign In') {
+            await vscode.commands.executeCommand('codefit.signIn');
+          }
+          return;
+        }
+
+        await vscode.window.withProgress(
+          {
+            location: vscode.ProgressLocation.Notification,
+            title: 'Syncing data to cloud...',
+            cancellable: false,
+          },
+          async (progress) => {
+            try {
+              // Get local activities
+              const activities = healthTracker.getAllActivities();
+              let synced = 0;
+
+              progress.report({ increment: 0, message: `Syncing ${activities.length} activities...` });
+
+              // Sync activities to cloud
+              for (let i = 0; i < activities.length; i++) {
+                const activity = activities[i];
+                try {
+                  await firebaseService.logActivity({
+                    type: 'exercise',
+                    exerciseId: activity.exercise?.id,
+                    exerciseName: activity.exercise?.name,
+                    category: activity.exercise?.category,
+                    duration: activity.duration || 0,
+                    source: 'vscode',
+                    completedFully: activity.completed || false,
+                  });
+                  synced++;
+
+                  const percentComplete = Math.floor(((i + 1) / activities.length) * 100);
+                  progress.report({
+                    increment: 100 / activities.length,
+                    message: `Synced ${synced}/${activities.length} activities (${percentComplete}%)`
+                  });
+                } catch (error) {
+                  outputChannel.appendLine(`Failed to sync activity: ${error}`);
+                  // Continue with next activity even if one fails
+                }
+              }
+
+              vscode.window.showInformationMessage(`✓ Synced ${synced}/${activities.length} activities to cloud`);
+            } catch (error) {
+              const errorMsg = error instanceof Error ? error.message : String(error);
+              outputChannel.appendLine(`Error in syncData: ${errorMsg}`);
+              vscode.window.showErrorMessage(`Sync failed: ${errorMsg}`);
+            }
+          }
+        );
+      })
+    );
+
+    context.subscriptions.push(
+      vscode.commands.registerCommand('codefit.viewLicense', async () => {
+        outputChannel.appendLine('Command: viewLicense triggered');
+
+        try {
+          if (!firebaseService.isAuthenticated()) {
+            vscode.window.showInformationMessage(
+              'Sign in to view license information',
+              'Sign In'
+            ).then(async (choice) => {
+              if (choice === 'Sign In') {
+                await vscode.commands.executeCommand('codefit.signIn');
+              }
+            });
+            return;
+          }
+
+          const license = await firebaseService.verifyLicense();
+          const email = firebaseService.getUserEmail();
+
+          const featureList = license.features.length > 0
+            ? `\n\nFeatures:\n${license.features.map(f => `• ${f}`).join('\n')}`
+            : '';
+
+          vscode.window.showInformationMessage(
+            `License Information\n\nEmail: ${email}\nType: ${license.type}${featureList}`,
+            'OK',
+            'Visit Dashboard'
+          ).then((choice) => {
+            if (choice === 'Visit Dashboard') {
+              vscode.env.openExternal(vscode.Uri.parse('https://www.codefit.ai/dashboard'));
+            }
+          });
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          outputChannel.appendLine(`Error in viewLicense: ${errorMsg}`);
+          vscode.window.showErrorMessage(`Failed to get license info: ${errorMsg}`);
         }
       })
     );
