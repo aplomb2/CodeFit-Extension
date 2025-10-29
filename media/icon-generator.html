@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>CodeFit Icon</title>
+</head>
+<body>
+    <canvas id="canvas" width="128" height="128"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Colors
+        const primaryGreen = '#22c55e';
+        const darkerGreen = '#16a34a';
+        const lightGreen = '#86efac';
+        
+        // Draw circular background
+        const center = 64;
+        const radius = 54;
+        
+        const gradient = ctx.createRadialGradient(center, center, 0, center, center, radius);
+        gradient.addColorStop(0, primaryGreen);
+        gradient.addColorStop(1, 'rgba(34, 197, 94, 0.9)');
+        
+        ctx.beginPath();
+        ctx.arc(center, center, radius, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        // Draw heart shape
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        const heartScale = 0.35;
+        const x = center;
+        const y = center - 4;
+        
+        // Heart curves
+        ctx.moveTo(x, y + 8 * heartScale);
+        ctx.bezierCurveTo(x, y + 5 * heartScale, x - 5 * heartScale, y, x - 10 * heartScale, y);
+        ctx.bezierCurveTo(x - 18 * heartScale, y, x - 18 * heartScale, y + 8 * heartScale, x - 18 * heartScale, y + 8 * heartScale);
+        ctx.bezierCurveTo(x - 18 * heartScale, y + 13 * heartScale, x - 15 * heartScale, y + 18 * heartScale, x, y + 25 * heartScale);
+        ctx.bezierCurveTo(x + 15 * heartScale, y + 18 * heartScale, x + 18 * heartScale, y + 13 * heartScale, x + 18 * heartScale, y + 8 * heartScale);
+        ctx.bezierCurveTo(x + 18 * heartScale, y + 8 * heartScale, x + 18 * heartScale, y, x + 10 * heartScale, y);
+        ctx.bezierCurveTo(x + 5 * heartScale, y, x, y + 5 * heartScale, x, y + 8 * heartScale);
+        ctx.fill();
+        
+        // Draw pulse line
+        ctx.strokeStyle = darkerGreen;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(center - 30, center + 5);
+        ctx.lineTo(center - 20, center + 5);
+        ctx.lineTo(center - 15, center - 10);
+        ctx.lineTo(center - 10, center + 15);
+        ctx.lineTo(center - 5, center);
+        ctx.lineTo(center + 5, center - 15);
+        ctx.lineTo(center + 10, center + 5);
+        ctx.lineTo(center + 20, center + 5);
+        ctx.lineTo(center + 30, center + 5);
+        ctx.stroke();
+        
+        // Draw code brackets
+        ctx.strokeStyle = 'rgba(134, 239, 172, 0.8)';
+        ctx.lineWidth = 4;
+        const bracketSize = 10;
+        const bracketOffset = 50;
+        
+        // Left bracket <
+        ctx.beginPath();
+        ctx.moveTo(center - bracketOffset + bracketSize, center - bracketSize - 10);
+        ctx.lineTo(center - bracketOffset, center - 10);
+        ctx.lineTo(center - bracketOffset + bracketSize, center + bracketSize - 10);
+        ctx.stroke();
+        
+        // Right bracket >
+        ctx.beginPath();
+        ctx.moveTo(center + bracketOffset - bracketSize, center - bracketSize - 10);
+        ctx.lineTo(center + bracketOffset, center - 10);
+        ctx.lineTo(center + bracketOffset - bracketSize, center + bracketSize - 10);
+        ctx.stroke();
+        
+        // Export as PNG
+        canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'icon.png';
+            a.click();
+        });
+    </script>
+</body>
+</html>

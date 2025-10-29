@@ -1,0 +1,18 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Green background -->
+  <rect width="128" height="128" fill="#22c55e" rx="24"/>
+
+  <!-- Heart shape -->
+  <path d="M64 100 L44 80 C34 70 34 54 44 44 C50 38 58 38 64 44 C70 38 78 38 84 44 C94 54 94 70 84 80 Z"
+        fill="white"
+        stroke="white"
+        stroke-width="2"/>
+
+  <!-- Code brackets -->
+  <text x="64" y="78"
+        font-family="monospace"
+        font-size="24"
+        font-weight="bold"
+        fill="#22c55e"
+        text-anchor="middle">{}</text>
+</svg>

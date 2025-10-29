@@ -1,0 +1,45 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#22c55e;stop-opacity:0.95" />
+    </radialGradient>
+  </defs>
+
+  <!-- Circular background -->
+  <circle cx="64" cy="64" r="54" fill="url(#bgGradient)"/>
+
+  <!-- Heart shape -->
+  <path d="M 64,68
+           C 64,65 59,60 54,60
+           C 46,60 46,68 46,68
+           C 46,73 51,78 64,89
+           C 77,78 82,73 82,68
+           C 82,68 82,60 74,60
+           C 69,60 64,65 64,68 Z"
+        fill="white"/>
+
+  <!-- Pulse line (EKG style) -->
+  <path d="M 34,69 L 44,69 L 49,59 L 54,79 L 59,64 L 69,49 L 74,69 L 84,69 L 94,69"
+        stroke="#16a34a"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"/>
+
+  <!-- Left code bracket < -->
+  <path d="M 24,44 L 14,54 L 24,64"
+        stroke="rgba(134,239,172,0.8)"
+        stroke-width="4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"/>
+
+  <!-- Right code bracket > -->
+  <path d="M 104,44 L 114,54 L 104,64"
+        stroke="rgba(134,239,172,0.8)"
+        stroke-width="4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"/>
+</svg>

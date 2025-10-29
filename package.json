@@ -1,0 +1,254 @@
+{
+  "name": "codefit",
+  "displayName": "CodeFit - Developer Health & Wellness",
+  "description": "Smart health reminders and exercise tracking for developers. Stay healthy while coding!",
+  "version": "0.1.0",
+  "publisher": "codefit",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "health",
+    "wellness",
+    "exercise",
+    "break",
+    "reminder",
+    "productivity",
+    "fitness",
+    "ergonomics",
+    "developer health",
+    "posture"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aplomb2/CodeFit-Extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aplomb2/CodeFit-Extension/issues"
+  },
+  "homepage": "https://www.codefit.ai",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#22c55e",
+    "theme": "light"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codefit.openDashboard",
+        "title": "CodeFit: Open Dashboard",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "codefit.startExercise",
+        "title": "CodeFit: Start Exercise",
+        "icon": "$(play)"
+      },
+      {
+        "command": "codefit.takeBreak",
+        "title": "CodeFit: Take Break Now",
+        "icon": "$(clock)"
+      },
+      {
+        "command": "codefit.snooze",
+        "title": "CodeFit: Snooze Reminders",
+        "icon": "$(bell-slash)"
+      },
+      {
+        "command": "codefit.viewStats",
+        "title": "CodeFit: View Statistics",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "codefit.pauseReminders",
+        "title": "CodeFit: Pause/Resume Reminders",
+        "icon": "$(debug-pause)"
+      }
+    ],
+    "configuration": {
+      "title": "CodeFit",
+      "properties": {
+        "codefit.reminder.frequency": {
+          "type": "string",
+          "default": "smart",
+          "enum": [
+            "smart",
+            "30min",
+            "60min",
+            "90min"
+          ],
+          "description": "Reminder frequency"
+        },
+        "codefit.reminder.style": {
+          "type": "string",
+          "default": "toast",
+          "enum": [
+            "toast",
+            "statusBar",
+            "background"
+          ],
+          "description": "Reminder notification style"
+        },
+        "codefit.reminder.sound": {
+          "type": "boolean",
+          "default": false,
+          "description": "Play sound with reminders"
+        },
+        "codefit.workMode": {
+          "type": "string",
+          "default": "freeform",
+          "enum": [
+            "pomodoro",
+            "freeform",
+            "deepWork"
+          ],
+          "description": "Work mode"
+        },
+        "codefit.doNotDisturb.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Do Not Disturb mode"
+        },
+        "codefit.doNotDisturb.hours": {
+          "type": "array",
+          "default": [
+            "12:00-13:00"
+          ],
+          "description": "Do Not Disturb hours (format: HH:MM-HH:MM)"
+        },
+        "codefit.exercise.intensity": {
+          "type": "string",
+          "default": "medium",
+          "enum": [
+            "light",
+            "medium",
+            "high"
+          ],
+          "description": "Preferred exercise intensity"
+        },
+        "codefit.exercise.types": {
+          "type": "array",
+          "default": [
+            "stretch",
+            "cardio",
+            "breathing"
+          ],
+          "description": "Preferred exercise types"
+        },
+        "codefit.exercise.duration": {
+          "type": "number",
+          "default": 3,
+          "enum": [
+            1,
+            3,
+            5
+          ],
+          "description": "Preferred exercise duration (minutes)"
+        },
+        "codefit.gamification.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable gamification features"
+        },
+        "codefit.gamification.showLevel": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show level in status bar"
+        },
+        "codefit.gamification.dailyQuests": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable daily quests"
+        },
+        "codefit.display.statusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show health status in status bar"
+        },
+        "codefit.display.theme": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "light",
+            "dark"
+          ],
+          "description": "Theme preference"
+        },
+        "codefit.privacy.analytics": {
+          "type": "string",
+          "default": "anonymous",
+          "enum": [
+            "full",
+            "anonymous",
+            "none"
+          ],
+          "description": "Analytics collection level"
+        },
+        "codefit.privacy.leaderboard": {
+          "type": "string",
+          "default": "anonymous",
+          "enum": [
+            "visible",
+            "anonymous",
+            "hidden"
+          ],
+          "description": "Leaderboard visibility"
+        },
+        "codefit.git.integration": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Git integration"
+        },
+        "codefit.git.commitReminder": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show reminders after commits"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "codefit.startExercise",
+        "key": "ctrl+alt+e",
+        "mac": "cmd+alt+e"
+      },
+      {
+        "command": "codefit.openDashboard",
+        "key": "ctrl+alt+d",
+        "mac": "cmd+alt+d"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vscode/vsce": "^2.22.0",
+    "esbuild": "^0.25.11",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "date-fns": "^2.30.0",
+    "uuid": "^9.0.1"
+  }
+}
