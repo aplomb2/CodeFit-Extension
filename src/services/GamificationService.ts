@@ -127,6 +127,10 @@ export class GamificationService {
     if (hour >= 6 && hour < 8) {
       bonus += 5;
     }
+    // Night owl bonus (6-8 AM)
+    if (hour >= 0 && hour < 6) {
+      bonus += 10;
+    }
 
     // Streak bonus
     if (this.userStats.streak >= 7) {
@@ -154,7 +158,7 @@ export class GamificationService {
     if (config.get('gamification.enabled')) {
       // Consistency bonus
       if (this.userStats.streak >= 7) {
-        points = Math.floor(points * 1.1);
+        points = Math.floor(points * (1 + 0.1 * Math.floor(this.userStats.streak / 7)));
       }
     }
 
